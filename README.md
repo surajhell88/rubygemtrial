@@ -1,28 +1,23 @@
 # Rubygemtrial
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rubygemtrial`. To experiment with that code, run `bin/console` for an interactive prompt.
+Welcome to my new gem! In this hell of a gem, I have setup 5 commands which help a user to say hello, setup his/her oauth token, reset the session, submit what he/she has learned and test his/her code.
 
-TODO: Delete this and the text above, and describe your gem
+## Prerequisites
 
-## Installation
+For installing the gem on your local machine, type in following commands:
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rubygemtrial'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install rubygemtrial
+    $ bundle install
+    $ rake install
 
 ## Usage
 
-TODO: Write usage instructions here
+Following will list all the available commands,
+
+	$ rubygemtrial help
+
+Use following to get command info,
+
+	$ rubygemtrial help {command-name}
 
 ## Development
 
