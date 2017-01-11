@@ -2,4 +2,11 @@
 
 require 'rubygemtrial'
 
+if ['-v', '--version'].include?(ARGV.first)
+  puts Rubygemtrial::VERSION
+  exit
+end
+
+Rubygemtrial::OptionsSanitizer.new( ARGV ).sanitize!
+
 Rubygemtrial::PinkProton.start( ARGV )
