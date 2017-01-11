@@ -14,6 +14,10 @@ module Rubygemtrial
     def reset()
       puts "Aww I am missing you already!"
     end
+    desc "open", "This will fork new work"
+    def open()
+      puts "Get ready!"
+    end
     desc "submit", "This will submit your work"
     def submit()
       puts "Way to go!"

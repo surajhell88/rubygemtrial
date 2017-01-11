@@ -1,6 +1,6 @@
 # Rubygemtrial
 
-Welcome to my new gem! In this hell of a gem, I have setup 5 commands which help a user to say hello, setup his/her oauth token, reset the session, submit what he/she has learned and test his/her code.
+Welcome to my new gem! In this hell of a gem, there is a list of commands which helps a user to say hello, setup an oauth token, reset the session, open a lesson, submit work done and test code.
 
 ## Prerequisites
 
