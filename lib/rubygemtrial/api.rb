@@ -1,5 +1,4 @@
 require "faraday"
-require "oj"
 # https://api.myjson.com/bins/c4vbn
 
 module Rubygemtrial
