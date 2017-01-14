@@ -33,6 +33,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor'
 
   spec.add_runtime_dependency "netrc"
+  spec.add_runtime_dependency "octokit", "~> 4.0"
   spec.add_runtime_dependency "json"
+  spec.add_runtime_dependency "git"
   spec.add_runtime_dependency "faraday", "~> 0.9"
 end

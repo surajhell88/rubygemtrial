@@ -27,13 +27,13 @@ module Rubygemtrial
     
     desc "reset", "This will forget you"
     def reset()
-      # puts "Aww I am missing you already!"
       Rubygemtrial::User.new().confirmAndReset
     end
     
     desc "open", "This will fork new work"
     def open()
-      puts "Get ready!"
+      # Fork and Clone User's current lesson
+      Rubygemtrial::User.new().openALesson
     end
     
     desc "submit", "This will submit your work"

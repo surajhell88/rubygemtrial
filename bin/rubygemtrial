@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygemtrial'
+require "rubygemtrial/netrc-interactor"
 
 if ['-v', '--version'].include?(ARGV.first)
   puts Rubygemtrial::VERSION
@@ -8,5 +9,17 @@ if ['-v', '--version'].include?(ARGV.first)
 end
 
 Rubygemtrial::OptionsSanitizer.new( ARGV ).sanitize!
+
+COMMANDS_THAT_REQUIRE_OAUTH = [
+	'submit',
+	'open'
+]
+
+netrc = Rubygemtrial::NetrcInteractor.new()
+netrc.read
+token = netrc.password
+if token.nil? && COMMANDS_THAT_REQUIRE_OAUTH.include?(ARGV[0])
+	ARGV[0] = "setup"
+end
 
 Rubygemtrial::PinkProton.start( ARGV )
