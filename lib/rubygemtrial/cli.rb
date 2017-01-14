@@ -22,7 +22,9 @@ module Rubygemtrial
         end
       end
       # Check if token is valid
-      Rubygemtrial::User.new().validate(password)
+      user = Rubygemtrial::User.new()
+      user.validate(password)
+      user.setDefaultWorkspace
     end
     
     desc "reset", "This will forget you"
@@ -39,6 +41,7 @@ module Rubygemtrial
     desc "submit", "This will submit your work"
     def submit()
       puts "Way to go!"
+      puts File.expand_path('~/Developmen')
     end
     
     desc "test", "This will test you"

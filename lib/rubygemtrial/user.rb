@@ -3,12 +3,14 @@ require "rubygemtrial/netrc-interactor"
 require 'json'
 require 'octokit'
 require 'git'
+require 'yaml'
 
 module Rubygemtrial
 	class User
-		attr_reader :netrc, :currentLesson, :token, :cloneUrl, :lessonName
+		attr_reader :netrc, :currentLesson, :token, :cloneUrl, :lessonName, :rootDir
 
-		ROOT_DIR = '/home/suraj/Development'
+		DEFAULT_EDITOR = 'atom'
+		HOME_DIR = File.expand_path("~")
 
 	    def initialize()
 	      	@netrc = Rubygemtrial::NetrcInteractor.new()
@@ -16,6 +18,9 @@ module Rubygemtrial
 	      	tok = netrc.password
 	      	if !tok.nil?
 	      		@token = tok
+	      	end
+	      	if File.exists?("#{HOME_DIR}/.ga-config")
+	      		@rootDir = YAML.load(File.read("#{HOME_DIR}/.ga-config"))[:workspace]
 	      	end
 	    end
 
@@ -59,6 +64,18 @@ module Rubygemtrial
 			welcome(username)
 		end
 
+		def setDefaultWorkspace
+			workspaceDir = File.expand_path('~/Workspace/code')
+			configPath = File.expand_path('~/.ga-config')
+
+			FileUtils.mkdir_p(workspaceDir)
+			FileUtils.touch(configPath)
+
+			data = YAML.dump({ workspace: workspaceDir, editor: DEFAULT_EDITOR })
+
+			File.write(configPath, data)
+		end
+
 	    def confirmAndReset
 	      	if confirmReset?
 	        	netrc.delete!(machine: 'ga-config')
@@ -87,10 +104,13 @@ module Rubygemtrial
 		def openALesson
 			# get currently active lesson
 			getCurrentLesson
-			# fork lesson repo via github api
-			forkCurrentLesson
-			# clone forked lesson into machine
-			cloneCurrentLesson
+			if !File.exists?("#{rootDir}/#{lessonName}")
+				# fork lesson repo via github api
+				forkCurrentLesson
+				# clone forked lesson into machine
+				cloneCurrentLesson
+			end
+			# install dependencies
 			# cd into it and invoke bash
 			cdToLesson
 		end
@@ -104,6 +124,7 @@ module Rubygemtrial
 					if response.status == 200
 						lesson = JSON.parse(response.body)
 						@currentLesson = 'sangamangreg/' + lesson.fetch('github_repo')
+						@lessonName = lesson.fetch('github_repo')
 					else
 		             	puts "Something went wrong. Please try again."
 		              	exit 1
@@ -122,7 +143,6 @@ module Rubygemtrial
 				Timeout::timeout(15) do
 					forkedRepo = octoClient.fork(currentLesson)
 					@cloneUrl = forkedRepo.git_url
-					@lessonName = forkedRepo.name
 				end
 			rescue Octokit::Error => err
 				puts "Error while forking!"
@@ -138,7 +158,7 @@ module Rubygemtrial
 			puts "Cloning lesson..."
 			begin
 	          	Timeout::timeout(15) do
-	            	Git.clone(cloneUrl, lessonName, path: ROOT_DIR)
+	            	Git.clone(cloneUrl, lessonName, path: rootDir)
 	          	end
 	        rescue Git::GitExecuteError => err
 	            puts "Error while cloning!"
@@ -152,7 +172,7 @@ module Rubygemtrial
 
 		def cdToLesson
 			puts "Opening lesson..."
-			Dir.chdir("#{ROOT_DIR}/#{lessonName}")
+			Dir.chdir("#{rootDir}/#{lessonName}")
 			puts "Done."
 			exec("#{ENV['SHELL']} -l")
 		end
