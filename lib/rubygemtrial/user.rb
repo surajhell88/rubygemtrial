@@ -1,6 +1,5 @@
 require "rubygemtrial/api"
 require "rubygemtrial/netrc-interactor"
-require "rubygemtrial/tests/runner"
 require 'json'
 require 'octokit'
 require 'git'
@@ -176,11 +175,6 @@ module Rubygemtrial
 			Dir.chdir("#{rootDir}/#{lessonName}")
 			puts "Done."
 			exec("#{ENV['SHELL']} -l")
-		end
-
-		def testLesson
-			puts 'Testing...'
-			Rubygemtrial::Test.new().run
 		end
 	end
 end

@@ -1,5 +1,6 @@
 require 'rubygemtrial/user'
 require 'rubygemtrial/netrc-interactor'
+require "rubygemtrial/tests/runner"
 require 'thor'
 
 module Rubygemtrial
@@ -45,7 +46,8 @@ module Rubygemtrial
     
     desc "test", "This will test you"
     def test()
-      Rubygemtrial::User.new().testLesson
+      puts 'Testing...'
+      Rubygemtrial::Test.new().run
     end
 
     desc 'version, -v, --version', 'Display the current version of the Learn gem'
