@@ -2,7 +2,7 @@ require 'yaml'
 require 'rubygemtrial/tests/strategies/python-test'
 
 module Rubygemtrial
-  class Runner
+  class Test
 
     def initialize()
       die if !strategy

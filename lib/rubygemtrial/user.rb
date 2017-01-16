@@ -180,7 +180,7 @@ module Rubygemtrial
 
 		def testLesson
 			puts 'Testing...'
-			Rubygemtrial::Runner.new().run
+			Rubygemtrial::Test.new().run
 		end
 	end
 end
