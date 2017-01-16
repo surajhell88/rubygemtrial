@@ -45,7 +45,7 @@ module Rubygemtrial
     
     desc "test", "This will test you"
     def test()
-      puts "Bomb in the hole!"
+      Rubygemtrial::User.new().testLesson
     end
 
     desc 'version, -v, --version', 'Display the current version of the Learn gem'
