@@ -1,6 +1,7 @@
 require 'rubygemtrial/user'
 require 'rubygemtrial/netrc-interactor'
 require "rubygemtrial/tests/runner"
+require "rubygemtrial/lesson/submit"
 require 'thor'
 
 module Rubygemtrial
@@ -41,7 +42,7 @@ module Rubygemtrial
     
     desc "submit", "This will submit your work"
     def submit()
-      puts "Way to go!"
+      Rubygemtrial::Submit.new().run
     end
     
     desc "test", "This will test you"
