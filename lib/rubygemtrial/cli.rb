@@ -2,6 +2,7 @@ require 'rubygemtrial/user'
 require 'rubygemtrial/netrc-interactor'
 require "rubygemtrial/tests/runner"
 require "rubygemtrial/lesson/submit"
+require "rubygemtrial/lesson/open"
 require 'thor'
 
 module Rubygemtrial
@@ -37,7 +38,7 @@ module Rubygemtrial
     desc "open", "This will fork new work"
     def open()
       # Fork and Clone User's current lesson
-      Rubygemtrial::User.new().openALesson
+      Rubygemtrial::Open.new().openALesson
     end
     
     desc "submit", "This will submit your work"
