@@ -1,4 +1,5 @@
 require "rubygemtrial/api"
+require 'json'
 
 module Rubygemtrial
 	class Current

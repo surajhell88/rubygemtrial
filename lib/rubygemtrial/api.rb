@@ -1,9 +1,8 @@
 require "faraday"
-# https://api.myjson.com/bins/c4vbn
 
 module Rubygemtrial
   class API
-    attr_reader :token, :conn, :silent_output
+    attr_reader :conn
 
     URL = 'https://api.myjson.com'
     API_ROOT  = '/api/v1'
@@ -29,20 +28,20 @@ module Rubygemtrial
         connection = options[:client] || @conn
         connection.send(method) do |req|
           req.url url
-          build_request(req, options)
+          buildRequest(req, options)
         end
       rescue Faraday::ConnectionFailed
         puts "Connection error. Please try again."
       end
     end
 
-    def build_request(request, options)
-      build_headers(request, options[:headers])
-      build_params(request, options[:params])
-      build_body(request, options[:body])
+    def buildRequest(request, options)
+      buildHeaders(request, options[:headers])
+      buildParams(request, options[:params])
+      buildBody(request, options[:body])
     end
 
-    def build_headers(request, headers)
+    def buildHeaders(request, headers)
       if headers
         headers.each do |header, value|
           request.headers[header] = value
@@ -50,7 +49,7 @@ module Rubygemtrial
       end
     end
 
-    def build_params(request, params)
+    def buildParams(request, params)
       if params
         params.each do |param, value|
           request.params[param] = value
@@ -58,7 +57,7 @@ module Rubygemtrial
       end
     end
 
-    def build_body(request, body)
+    def buildBody(request, body)
       if body
         request.body = Oj.dump(body, mode: :compat)
       end

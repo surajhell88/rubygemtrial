@@ -1,4 +1,5 @@
 require "rubygemtrial/netrc-interactor"
+require 'octokit'
 
 module Rubygemtrial
 	class Github

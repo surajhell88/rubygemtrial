@@ -1,8 +1,7 @@
-require "rubygemtrial/api"
-require "rubygemtrial/netrc-interactor"
-require "rubygemtrial/github"
 require "rubygemtrial/lesson/current"
-require 'json'
+require "rubygemtrial/netrc-interactor"
+require "rubygemtrial/api"
+require "rubygemtrial/github"
 require 'octokit'
 require 'git'
 

@@ -9,7 +9,7 @@ module Rubygemtrial
       attr_accessor :remote_name
 
       REPO_BELONGS_TO_US = [
-        'surajhell88'
+        'Rubygemtrial'
       ]
 
       def initialize()
