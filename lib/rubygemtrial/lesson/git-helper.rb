@@ -1,19 +1,22 @@
+require "rubygemtrial/lesson/current"
 require "rubygemtrial/netrc-interactor"
+require "rubygemtrial/github"
 
 module Rubygemtrial
   class Submit
     class GitHelper
-      attr_reader   :git, :dummyUsername
+      attr_reader   :git, :dummyUsername, :currentLesson, :netrc
       attr_accessor :remote_name
 
       REPO_BELONGS_TO_US = [
-        'sangamangreg'
+        'surajhell88'
       ]
 
       def initialize()
-        puts 'githelper initialize'
         @git = setGit
         @dummyUsername = 'gitint'
+        @netrc = Rubygemtrial::NetrcInteractor.new()
+        @currentLesson = Rubygemtrial::Current.new
       end
 
       def commitAndPush
@@ -22,6 +25,7 @@ module Rubygemtrial
         commitChanges
 
         push
+        createPullRequest
       end
 
       private
@@ -43,7 +47,6 @@ module Rubygemtrial
       end
 
       def checkRemote
-        netrc = Rubygemtrial::NetrcInteractor.new()
         netrc.read(machine: 'ga-extra')
         username = dummyUsername || netrc.login
         if git.remote.url.match(/#{username}/i).nil? && git.remote.url.match(/#{REPO_BELONGS_TO_US.join('|').gsub('-','\-')}/i).nil?
@@ -84,11 +87,34 @@ module Rubygemtrial
             git.push(push_remote)
           end
         rescue Git::GitExecuteError => e
-          puts 'Git Push Error'
+          puts 'There was an error while pushing. Please try again later.'
           puts e.message
+          exit 1
         rescue Timeout::Error
           puts "Can't reach GitHub right now. Please try again."
           exit 1
+        end
+      end
+
+      def createPullRequest
+        puts 'Creating Pull Request...'
+        currentLesson.getCurrentLesson
+        userGithub = Rubygemtrial::Github.new()
+        netrc.read
+        username = dummyUsername || netrc.login
+        begin
+          Timeout::timeout(45) do
+            parentRepo = currentLesson.getAttr('github_repo')
+            pullRequest = userGithub.client.create_pull_request(parentRepo, 'master', "#{username}:master", "PR by #{username}")
+            puts "Lesson submitted successfully!"
+          end
+        rescue Octokit::Error => err
+          puts "Error while creating PR!"
+          puts err
+          exit
+        rescue Timeout::Error
+          puts "Please check your internet connection."
+          exit
         end
       end
     end

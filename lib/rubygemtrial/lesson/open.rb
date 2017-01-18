@@ -1,30 +1,29 @@
 require "rubygemtrial/api"
 require "rubygemtrial/netrc-interactor"
+require "rubygemtrial/github"
+require "rubygemtrial/lesson/current"
 require 'json'
 require 'octokit'
 require 'git'
 
 module Rubygemtrial
 	class Open
-		attr_reader :currentLesson, :token, :cloneUrl, :lessonName, :rootDir
+		attr_reader :lessonName, :rootDir, :lesson
 
 		HOME_DIR = File.expand_path("~")
 
 	    def initialize()
-	      	netrc = Rubygemtrial::NetrcInteractor.new()
-	      	netrc.read
-	      	tok = netrc.password
-	      	if !tok.nil?
-	      		@token = tok
-	      	end
 	      	if File.exists?("#{HOME_DIR}/.ga-config")
 	      		@rootDir = YAML.load(File.read("#{HOME_DIR}/.ga-config"))[:workspace]
 	      	end
+	      	@lesson = Rubygemtrial::Current.new
 	    end
 
 		def openALesson
 			# get currently active lesson
-			getCurrentLesson
+			puts "Getting current lesson..."
+			lesson.getCurrentLesson
+			@lessonName = lesson.getAttr('lesson_name')
 			if !File.exists?("#{rootDir}/#{lessonName}")
 				# fork lesson repo via github api
 				forkCurrentLesson
@@ -36,34 +35,13 @@ module Rubygemtrial
 			cdToLesson
 		end
 
-		def getCurrentLesson
-			# https://api.myjson.com/bins/ymhxf
-			puts "Getting current lesson..."
-			begin
-				Timeout::timeout(15) do
-					response = Rubygemtrial::API.new().get('/bins/ymhxf')
-					if response.status == 200
-						lesson = JSON.parse(response.body)
-						@currentLesson = 'sangamangreg/' + lesson.fetch('github_repo')
-						@lessonName = lesson.fetch('github_repo')
-					else
-		             	puts "Something went wrong. Please try again."
-		              	exit 1
-					end
-				end
-			rescue Timeout::Error
-				puts "Please check your internet connection."
-				exit
-			end
-		end
-
 		def forkCurrentLesson
 			puts "Forking lesson..."
-			octoClient = Octokit::Client.new(:access_token => token)
+			github = Rubygemtrial::Github.new()
 			begin
 				Timeout::timeout(15) do
-					forkedRepo = octoClient.fork(currentLesson)
-					@cloneUrl = forkedRepo.git_url
+					lessonRepo = lesson.getAttr('github_repo')
+					forkedRepo = github.client.fork(lessonRepo)
 				end
 			rescue Octokit::Error => err
 				puts "Error while forking!"
@@ -79,7 +57,8 @@ module Rubygemtrial
 			puts "Cloning lesson..."
 			begin
 	          	Timeout::timeout(15) do
-	            	Git.clone(cloneUrl, lessonName, path: rootDir)
+	          		cloneUrl = lesson.getAttr('forked_repo')
+	            	Git.clone("git@github.com:#{cloneUrl}.git", lessonName, path: rootDir)
 	          	end
 	        rescue Git::GitExecuteError => err
 	            puts "Error while cloning!"
